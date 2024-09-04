@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MoveTest : MonoBehaviour
 {
-     public Transform Player;
+     public Vector3 Player;
     // Start is called before the first frame update
     void Start()
     {
