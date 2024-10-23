@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour
     //플레이어의 움직임 속도를 설정하는 변수
     public float moveSpeed = 5.0f;          //이동속도
     public float jumpForce = 5.0f;          //점프 힘
+    public float rotationSpeed = 10f;       //회전 속도
 
     //카메라 설정 변수
     [Header("Camera Settings")]
@@ -51,8 +52,12 @@ public class PlayerController : MonoBehaviour
     {
         HandleRotation();
         HandleJump();
-        HandleMovement();
         HandleCameraToggle();
+    }
+
+    private void FixedUpdate()
+    {
+        HandleMovement();
     }
 
     void SetActiveCamera()
@@ -80,6 +85,7 @@ public class PlayerController : MonoBehaviour
 
         if (isFirstPerson)
         {
+            transform.rotation = Quaternion.Euler(0.0f, theta, 0.0f);
             firstPersonCamera.transform.localRotation = Quaternion.Euler(phi, 0.0f, 0.0f);
 
         }
@@ -132,7 +138,8 @@ public class PlayerController : MonoBehaviour
     {
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVerical = Input.GetAxis("Vertical");
-
+       
+        Vector3 movement;
         if (!isFirstPerson)
         {
             Vector3 cameraForward = thirdPersonCamera.transform.forward;
@@ -144,18 +151,27 @@ public class PlayerController : MonoBehaviour
             cameraRight.Normalize();
 
             //이동 벡터 계산
-            Vector3 movement = cameraForward * moveVerical + cameraRight * moveHorizontal;
-            rb.MovePosition(rb.position + movement * moveSpeed * Time.deltaTime);
+            movement = cameraForward * moveVerical + cameraRight * moveHorizontal;
+            
         }
         else 
         {
             //캐릭터 기준으로 이동(1인칭)
-            Vector3 movement = transform.right * moveHorizontal + transform.forward * moveVerical;
-            rb.MovePosition(rb.position + movement * moveSpeed * Time.deltaTime);   //물리 기반 이동
+            movement = transform.right * moveHorizontal + transform.forward * moveVerical;
 
         }
 
-        
+        //이동 방향으로 캐릭터 회전
+        if (movement.magnitude > 0.1f)
+        {
+            Quaternion toRotation = Quaternion.LookRotation(movement, Vector3.up);
+            transform.rotation = Quaternion.Slerp(transform.rotation, toRotation, rotationSpeed * Time.deltaTime);
+
+        }
+
+        rb.MovePosition(rb.position + movement * moveSpeed * Time.deltaTime);
+
+
 
     }
 
