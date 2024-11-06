@@ -32,7 +32,7 @@ public class PlayerController : MonoBehaviour
 
 
     //내부 변수들
-    private bool isFirstPerson = true;      //1인칭 모드 인지 여부
+    public bool isFirstPerson = true;      //1인칭 모드 인지 여부
     private bool isGrounded;               //플레이어가 땅에 있는지 여부
     private Rigidbody rb;                  // 플레이어의 리즈드바디 
 
@@ -180,4 +180,15 @@ public class PlayerController : MonoBehaviour
     {
         isGrounded = true;               //충돌 중이면 플레이어는 땅에 있다.
     }
+
+   /* private Vector3 GetLookPosition()
+    {
+        if (PlayerController.isFirstPerson)
+        {
+            Ray ray = new Ray(firstPersonCamera.transform.position, firstPersonCamera.transform.forward);
+            if (Physics.Raycast(ray.origin, ray.direction * hitInfo.distance, Color.red))
+            { 
+            }
+        }
+    }*/
 }

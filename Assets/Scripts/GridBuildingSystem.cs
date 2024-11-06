@@ -30,7 +30,7 @@ public class GridBuildingSystem : MonoBehaviour
     [SerializeField] private float maxBuildDistance = 5f;          //건설 가능한 최대 거리
 
     [SerializeField] private Grid grid;     //그리드 선언 후 받아온다.
-    private GridCell[,] cell;               //2차 배열로 선언 GridCell
+    private GridCell[,] cells;               //2차 배열로 선언 GridCell
     private Camera firstPersonCamera;       //플레이어의 1인칭 카메라를 가져온다.
 
 
@@ -58,13 +58,21 @@ public class GridBuildingSystem : MonoBehaviour
     private void CreateGrid()
     {
         grid.cellSize = new Vector3(cellSize, cellSize, cellSize);   //설정한 셀 사이즈를 그리드 컴퍼넌트에 넣는다.
-        cellSize = new GridCell[width, height];
+        cells = new GridCell[width, height];
         Vector3 gridCenter = playerController.transform.position;
         gridCenter.y = 0;
         transform.position = gridCenter = new Vector3(width * cellSize / 2.0f, 0, height * cellSize / 2);  //그리드 중심으로 이동 시킨다.
-        for (int z = 0; z < width; z++)
+        for (int x = 0; x < width; x++)
         {
-            for(int z = 0; z< height; z++)
+            for (int z = 0; z < height; z++)
+            {
+                Vector3Int cellPosition = new Vector3Int(x, 0, z);
+                Vector3 worIdposition = grid.GetCellCenterWorld(cellPosition);
+                GameObject cellObject = Instantiate(cellPrefab, worIdposition, cellPrefab.transform.rotation);
+                cellObject.transform.SetParent(transform);
+
+                cells [x, z] = new GridCell(cellPosition);
+            }
 
         }
     }
